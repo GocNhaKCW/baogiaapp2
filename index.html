@@ -375,11 +375,23 @@ function getTong() {
 }
 function syncTT(tong) {}
 function updTT(id,f,v) {
-  var r=ttRows.find(function(r){return r.id===id;}); if(!r)return; r[f]=v;
+  var r=ttRows.find(function(r){return r.id===id;}); if(!r)return;
+  r[f]=v;
   var tong=getTong();
-  if(f==='pct'&&v>0){r.amt=Math.round(tong*v/100);var el=document.getElementById('ta_'+id);if(el)el.value=FN(r.amt);}
-  else if(f==='amt'){r.amt=parseInt((v+'').replace(/[^0-9]/g,''))||0; r.pct=tong>0?Math.round(r.amt/tong*100):0; var ep=document.getElementById('tp_'+id);if(ep)ep.value=r.pct;}
+  // Chỉ tính dòng đang sửa, không ảnh hưởng dòng khác
+  if(f==='pct'&&+v>0){
+    r.pct=+v;
+    r.amt=Math.round(tong*r.pct/100);
+    var el=document.getElementById('ta_'+id);
+    if(el)el.value=FN(r.amt);
+  } else if(f==='amt'){
+    r.amt=parseInt((v+'').replace(/[^0-9]/g,''))||0;
+    r.pct=tong>0?Math.round(r.amt/tong*100):0;
+    var ep=document.getElementById('tp_'+id);
+    if(ep)ep.value=r.pct;
+  }
 }
+
 function rTT() {
   var html='';
   ttRows.forEach(function(r,i) {
